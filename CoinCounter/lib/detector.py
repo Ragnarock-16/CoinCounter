@@ -59,9 +59,6 @@ def get_background(img):
     kernel_size = 3
     kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (kernel_size, kernel_size))
     bg = cv2.dilate(res, kernel, iterations=3)
-    cv2.imshow("Distance Transform", bg)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
     return bg
 
 
@@ -87,11 +84,8 @@ def segment_with_watershed(img):
     markers[unknown == 255] = 0
     markers = cv2.watershed(img, markers)
     img[markers == -1] = [255, 0, 0]
-    cv2.imshow("Distance Transform", img)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
     num_regions = np.max(markers) - 1
-    return res, num_regions
+    return markers, num_regions
 
 
 def segment_with_hough_circles(img):
