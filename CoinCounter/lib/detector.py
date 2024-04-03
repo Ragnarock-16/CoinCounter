@@ -1,12 +1,19 @@
 import cv2
 import numpy as np
 
+def iterative_gaussian_blur(image, num_iterations=3, start_sigma=0, step=1):
+    blurred_image = image.copy()
+    sigma = start_sigma
+    for _ in range(num_iterations):
+        blurred_image = cv2.GaussianBlur(blurred_image, (5, 5), sigma)
+        sigma += step
+    return blurred_image
+
 def pretreat(img):
     res = img.copy()
     res = cv2.cvtColor(res, cv2.COLOR_BGR2RGB)
-    res = cv2.resize(res,(512,512),interpolation=cv2.INTER_AREA)
     res = cv2.cvtColor(res, cv2.COLOR_BGR2GRAY)
-    res = cv2.GaussianBlur(res, (3, 3), 2)
+    res = cv2.GaussianBlur(res, (21, 21),2)
     return res
 
 def find_background_color(image,border_size=5):
