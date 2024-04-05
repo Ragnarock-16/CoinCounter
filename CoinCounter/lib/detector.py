@@ -1,6 +1,24 @@
 import cv2
 import numpy as np
 
+
+def findCoin(image):
+    circles = cv2.HoughCircles(image, cv2.HOUGH_GRADIENT, 1, 100,
+                        param1=60, param2=20, minRadius=9, maxRadius=150)
+    cimg = cv2.cvtColor(image, cv2.COLOR_GRAY2BGR)
+
+    if circles is not None:
+        circles = np.uint16(np.around(circles))
+        
+        for i in circles[0,:]:
+            # draw the outer circle
+            cv2.circle(cimg,(i[0],i[1]),i[2],(0,255,0),2)
+            # draw the center of the circle
+            cv2.circle(cimg,(i[0],i[1]),2,(0,0,255),3)
+
+    return cimg,circles
+
+    
 def iterative_gaussian_blur(image, num_iterations=3, start_sigma=0, step=1):
     blurred_image = image.copy()
     sigma = start_sigma
