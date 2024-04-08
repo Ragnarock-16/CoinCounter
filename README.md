@@ -15,7 +15,7 @@ The CoinCounter project implements a pipeline for coin detection and amount comp
 
 The CoinCounter pipeline follows these steps:
 
-1. **Image Preprocessing**: The input image undergoes preprocessing steps, including color space conversion, iterative Gaussian blur, and thresholding, scalling.
+1. **Image Preprocessing**: The input image undergoes preprocessing steps, including color space conversion, iterative Gaussian blur, thresholding and scalling.
 2. **Coin Detection**: Coins are detected in the preprocessed image using Hough Circle Transform.
 3. **Coin Value Estimation**: Detected coins are classified based on their color and size to estimate their values.
 4. **Amount Computation**: The total amount of money in the image is computed based on the detected coin values.
@@ -30,4 +30,12 @@ The CoinCounter project evaluates its performance using the following metrics:
 - **Mean Absolute Error (MAE)**: Measures the average absolute difference between the true amount and the computed amount for each image.
 - **Precision**: Measures the accuracy of coin detection, i.e., the ratio of true positive detections to the total detected coins.
 - **Recall**: Measures the completeness of coin detection, i.e., the ratio of true positive detections to the total ground truth coins.
+
+## Result
+
+| Metric             | Value                   |
+|--------------------|-------------------------|
+| Precision          | 0.9719                  |
+| Recall             | 0.5796                  |
+| Overall MAE        | 1.5259                  |
 
