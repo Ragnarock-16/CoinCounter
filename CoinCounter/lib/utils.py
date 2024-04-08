@@ -24,9 +24,10 @@ def clean_dataset(dataset):
 def read_images():
     images = {}
     for filename in os.listdir(IMG_PATH):
-        img = cv2.imread(os.path.join(IMG_PATH, filename), cv2.IMREAD_GRAYSCALE)
-        if img is not None:
+
+        img = cv2.imread(os.path.join(IMG_PATH,filename))
+        if(img is not None):
             images[filename] = img
-        else:
+        else:            
             print("Error with file", filename)
     return images

@@ -3,22 +3,11 @@ import os
 import numpy as np
 from lib.detector import *
 from lib.classifier import Classifier
-
+from lib.utils import *
 DIRNAME = os.path.dirname(os.path.dirname(__file__))
 IMG_PATH = os.path.join(DIRNAME,"data")
 IMG_ANNOTATION_PATH = os.path.join(DIRNAME,"data_annotation.csv")
 myClassifier = Classifier()
-
-def read_images():
-    images = {}
-    for filename in os.listdir(IMG_PATH):
-
-        img = cv2.imread(os.path.join(IMG_PATH,filename))
-        if(img is not None):
-            images[filename] = img
-        else:            
-            print("Error with file", filename)
-    return images
 
 def main():
 
@@ -114,5 +103,5 @@ if __name__ == "__main__":
     BEST RESULT:
 Precision:  0.9719101123595506
 Recall:  0.5795644891122278
-Overall MAE for amount :  1.5928048780487802
+Overall MAE for amount :  1.5258536585365847
 '''

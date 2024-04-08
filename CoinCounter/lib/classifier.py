@@ -23,11 +23,23 @@ class Classifier():
         self.false_pos = 0
     
     def read_csv(self):
+        """
+        Method to read CSV file containing image labels.
+        
+        Returns:
+            DataFrame: Pandas DataFrame containing image labels.
+        """
         LABEL_PATH = "/Users/nour/Documents/M1/imgProcessing/CoinCounter/data_clean.csv"
         return pd.read_csv(LABEL_PATH)
 
     def coin_finder_accuracy(self, img_name,found):
+        """
+        Evaluate the accuracy of coin detection for a given image.
         
+        Args:
+            img_name (str): Name of the image.
+            found (int): Number of coins found in the image.
+        """
         try:
             truth = self.label.loc[self.label['image_label'] == img_name, 'nb_coins'].values[0]
 
@@ -43,12 +55,22 @@ class Classifier():
             print("Error with: ",img_name)
 
     def print_coin_finder_evaluation(self):
+        """
+        Print precision and recall for coin detection.
+        """
         precision = self.true_pos / (self.true_pos + self.false_pos)
         recall = self.true_pos / (self.true_pos + self.false_neg)
         print("Precision: ", precision)
         print("Recall: ", recall)
 
     def compute_amount_MAE(self,img_name,found_amount):
+        """
+        Compute mean absolute error (MAE) for detected amount in a given image.
+        
+        Args:
+            img_name (str): Name of the image.
+            found_amount (float): Detected amount of money in the image.
+        """
         try:
             unit = self.label.loc[self.label['image_label'] == img_name, 'units'].values[0]
             cent = self.label.loc[self.label['image_label'] == img_name, 'cents'].values[0]
@@ -61,15 +83,38 @@ class Classifier():
             print("Error with: ",img_name)
     
     def print_overall_mae(self):
+        """
+        Print overall mean absolute error (MAE) for amount.
+        """
         print("Overall MAE for amount : ", str(self.amount_MAE/self.nb_images))
     
     def draw_coin_value(self,image,value,text,coordinate):
+        """
+        Draw coin value on the image.
+        
+        Args:
+            image (numpy.ndarray): Input image.
+            value (float): Coin value.
+            text (str): Text to be displayed.
+            coordinate (tuple): Coordinate to place the text.
+        """
         font_scale = min(image.shape[0], image.shape[1]) / 1000.0  
 
         cv2.putText(image, f'{text}: {value}', coordinate, cv2.FONT_HERSHEY_SIMPLEX, font_scale, (0, 0, 255), 1)
 
         
     def findValue(self,cimg ,image, circles):
+        """
+        Detect and compute the value of coins in the image.
+        
+        Args:
+            cimg (numpy.ndarray): Color image with detected circles.
+            image (numpy.ndarray): Grayscale image.
+            circles (numpy.ndarray): Detected circles.
+        
+        Returns:
+            float: Total value of coins detected in the image.
+        """
         coin_counts = {
             "nb_two": 0,
             "nb_one": 0,
