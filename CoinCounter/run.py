@@ -21,7 +21,7 @@ def read_images():
     return images
 
 def main():
-    #Read images
+
     images = read_images()
 
     for name, img in images.items():
@@ -66,18 +66,20 @@ def main():
             #Circle 
             if(resized_bin_image is not None):
                 cimg,coins = findCoin(resized_bin_image)
-
-                cv2.imwrite(name,cimg)
                 
                 if coins is not None:
                     myClassifier.coin_finder_accuracy(name,len(coins[0]))
-                    amount = myClassifier.findValue(resized_image,coins)
+                    amount = myClassifier.findValue(cimg,resized_image,coins)
+                    myClassifier.draw_coin_value(cimg,amount,"Total",(50,50))
                     myClassifier.compute_amount_MAE(name, amount)
                 else:
                     print("(Reshaped) No coin found : ",name)
                     myClassifier.coin_finder_accuracy(name,0)
 
                     #myClassifier.print_coin_finder_accuracy(name,0)
+                
+                cv2.imwrite(name,cimg)
+
 
         else:
                 cimg,coins = findCoin(dilated_image)
@@ -87,6 +89,7 @@ def main():
                 if coins is not None:
                     myClassifier.coin_finder_accuracy(name,len(coins[0]))
                     amount = myClassifier.findValue(resized_image,coins)
+                    myClassifier.draw_coin_value(resized_image,amount,"Total",(50,50))
                     myClassifier.compute_amount_MAE(name, amount)
                 else:
                     print("No coin found : ",name)
@@ -107,12 +110,9 @@ if __name__ == "__main__":
     main()
 
 
-# BEST RESULT:
-#1)
-#    circles = cv2.HoughCircles(image, cv2.HOUGH_GRADIENT, 1, 40,
-#                        param1=50, param2=22, minRadius=15, maxRadius=1000)
-#Mean coin finder accuracy: 0.8870866008098708
-#Overall MAE for amount :  55.00768292682929
-#2)
-#Mean coin finder accuracy: 0.7999374502621317
-#Overall MAE for amount :  42.78109756097563
+''' 
+    BEST RESULT:
+Precision:  0.9719101123595506
+Recall:  0.5795644891122278
+Overall MAE for amount :  1.5928048780487802
+'''

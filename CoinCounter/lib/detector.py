@@ -80,14 +80,3 @@ def segment_with_watershed(img):
     markers = cv2.watershed(img,markers)
     res[markers == -1] = [255,0,0]
     return res
-
-def segment_with_hough_circles(img):
-
-    pass
-
-def count_coins():
-    pass
-
-
-def evaluate():
-    pass

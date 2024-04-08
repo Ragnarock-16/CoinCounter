@@ -1,15 +1,15 @@
 import pandas as pd
 import numpy as np
-
+import cv2
 class Classifier():
     
     COIN_VALUES = {
         "nb_two": 2,
         "nb_one": 1,
-        "nb_ten": 10,
-        "nb_twenty": 20,
-        "nb_fifty": 50,
-        "nb_five": 5,
+        "nb_ten": 0.10,
+        "nb_twenty": 0.20,
+        "nb_fifty": 0.50,
+        "nb_five": 0.05,
         "nb_zero_two": 0.02,
         "nb_zero_one": 0.01
     }
@@ -56,14 +56,20 @@ class Classifier():
 
             mae = abs(total - found_amount)
             self.amount_MAE += mae
-            #print("MAE for image " + img_name + " : "+ str(mae))
+            print("MAE for image " + img_name + " : "+ str(mae))
         except:
             print("Error with: ",img_name)
     
     def print_overall_mae(self):
         print("Overall MAE for amount : ", str(self.amount_MAE/self.nb_images))
+    
+    def draw_coin_value(self,image,value,text,coordinate):
+        font_scale = min(image.shape[0], image.shape[1]) / 1000.0  
+
+        cv2.putText(image, f'{text}: {value}', coordinate, cv2.FONT_HERSHEY_SIMPLEX, font_scale, (0, 0, 255), 1)
+
         
-    def findValue(self, image, circles):
+    def findValue(self,cimg ,image, circles):
         coin_counts = {
             "nb_two": 0,
             "nb_one": 0,
@@ -77,29 +83,38 @@ class Classifier():
         for circle in circles[0,:]:
             x_center, y_center = circle[0], circle[1]
             radius = circle[2]
-            color_at_center = image[y_center, x_center]
+            color_at_center = image[y_center, x_center].astype(float)
             diameter = radius**2
-
-            if(color_at_center[2]>200):
-                if(diameter <= 2300):
+            
+            #Red Coin delta between G and R big or factor between R and B >2
+            if(abs(color_at_center[2] - color_at_center[1]) >=37 or color_at_center[2]/color_at_center[0] > 2.3):
+                if(diameter <= 1800):
                     coin_counts["nb_zero_one"] +=1
-                elif(diameter >2300 and diameter< 2700):
+                    self.draw_coin_value(cimg,self.COIN_VALUES["nb_zero_one"],"Val",(x_center,y_center))
+                elif(diameter >1800 and diameter< 2100):
                     coin_counts["nb_zero_two"] +=1
+                    self.draw_coin_value(cimg,self.COIN_VALUES["nb_zero_two"],"Val",(x_center,y_center))
                 else:
                     coin_counts["nb_five"] +=1
-            elif(color_at_center[0] < 70 and color_at_center[2] < 140):
-                if(diameter<=3600):
-                    coin_counts["nb_two"]+=1
-                else:
+                    self.draw_coin_value(cimg,self.COIN_VALUES["nb_five"],"Val",(x_center,y_center))
+            #Silver Coin
+            elif(abs(color_at_center[0] - color_at_center[1]) < 25 and abs(color_at_center[0] - color_at_center[2]) <  25):
                     coin_counts["nb_one"]+=1
+                    self.draw_coin_value(cimg,self.COIN_VALUES["nb_one"],"Val",(x_center,y_center))
+            #GOLD Coin
             else:
                 if (diameter <= 3900):
                     coin_counts["nb_ten"] +=1
-                elif(diameter > 3900 and diameter <4500):
+                    self.draw_coin_value(cimg,self.COIN_VALUES["nb_ten"],"Val",(x_center,y_center))
+                elif(diameter > 3900 and diameter <4200):
                     coin_counts["nb_twenty"] +=1
-
+                    self.draw_coin_value(cimg,self.COIN_VALUES["nb_twenty"],"Val",(x_center,y_center))
+                elif(diameter > 4800):
+                    coin_counts["nb_two"]+=1
+                    self.draw_coin_value(cimg,self.COIN_VALUES["nb_two"],"Val",(x_center,y_center))
                 else:
                     coin_counts["nb_fifty"] +=1
-
+                    self.draw_coin_value(cimg,self.COIN_VALUES["nb_fifty"],"Val",(x_center,y_center))
+                    
         return sum(coin_counts[key] * self.COIN_VALUES[key] for key in coin_counts)
 
